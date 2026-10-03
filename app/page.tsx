@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase";
 
-type Servicio = {
+type Pizza = {
   titulo: string;
   desc: string;
   precio?: string;
@@ -35,36 +35,63 @@ type Horario = {
 };
 
 const inicioPorDefecto: ContenidoInicio = {
-  titulo: "SERVICIO PODOLÓGICO HUSEY",
-  frase: "Cuidado y bienestar para tus pies",
+  titulo: "PIZZERÍA JEYMI",
+  frase: "Sabor que se disfruta en cada rebanada",
   descripcion:
-    "Atención podológica profesional para cuidar la salud de tus pies y ayudarte a caminar con mayor comodidad.",
+    "Pizzas preparadas con ingredientes de calidad, mucho sabor y el toque especial de nuestra casa.",
 };
 
-const serviciosPorDefecto: Servicio[] = [
+const serviciosPorDefecto: Pizza[] = [
   {
-    titulo: "Consulta podológica",
-    desc: "Evaluación general y atención profesional para el cuidado de tus pies.",
+    titulo: "Pizza de Pepperoni",
+    desc: "Clásica, deliciosa y preparada con abundante pepperoni y queso.",
   },
   {
-    titulo: "Tratamiento de uñas",
-    desc: "Cuidado especializado de las uñas para mantenerlas saludables y en buenas condiciones.",
+    titulo: "Pizza Hawaiana",
+    desc: "La combinación perfecta de jamón, piña y queso para disfrutar en cada mordida.",
   },
   {
-    titulo: "Cuidado del pie",
-    desc: "Atención enfocada en mejorar el bienestar y cuidado general de tus pies.",
+    titulo: "Pizza Cuatro Quesos",
+    desc: "Una mezcla cremosa de quesos seleccionados para los amantes del queso.",
   },
   {
-    titulo: "Cuidado preventivo",
-    desc: "Atención preventiva para mantener una buena salud y apariencia de los pies.",
+    titulo: "Pizza Mexicana",
+    desc: "Con ingredientes llenos de sabor para quienes disfrutan una pizza con carácter.",
   },
   {
-    titulo: "Tratamiento especializado",
-    desc: "Atención personalizada de acuerdo con las necesidades de cada paciente.",
+    titulo: "Pizza Especial de la Casa",
+    desc: "Nuestra especialidad preparada con la combinación favorita de la casa.",
   },
   {
-    titulo: "Atención personalizada",
-    desc: "Servicio pensado para brindar una atención cómoda, profesional y de confianza.",
+    titulo: "Pedidos y atención",
+    desc: "Elige tus ingredientes favoritos y disfruta una pizza hecha a tu manera.",
+  },
+];
+
+type Paquete = {
+  titulo: string;
+  descripcion: string;
+  precio: string;
+};
+
+const paquetesDestacados: Paquete[] = [
+  {
+    titulo: "Paquete 7",
+    descripcion:
+      "Paquete 7: 3 pizzas jumbo de cualquier combinación + 1 refresco de 2 L. \n\n por mitad y mitad tiene un costo extra por pizza.",
+    precio: "$590",
+  },
+  {
+    titulo: "Paquete 8",
+    descripcion:
+      "Paquete 8: 3 pizzas medianas de cualquier combinación + 1 refresco de 2 L.\n\n por mitad y mitad tiene un costo extra por pizza.",
+    precio: "$330",
+  },
+  {
+    titulo: "Pizza rectangular",
+    descripcion:
+      "Pizza rectangura de 4 combinaciones, con orilla de queso crema y ajonjoli, + 1 refesco de 2 L.",
+    precio: "$365",
   },
 ];
 
@@ -96,12 +123,12 @@ export default function Home() {
     inicioPorDefecto.descripcion
   );
 
-  const [servicios, setServicios] = useState<Servicio[]>(
+  const [servicios, setPizzas] = useState<Pizza[]>(
     serviciosPorDefecto
   );
 
   const [nosotrosTexto, setNosotrosTexto] = useState(
-    "En Servicio Podológico Husey nos enfocamos en brindar atención profesional y personalizada para el cuidado de tus pies, buscando siempre ofrecer un servicio de calidad y confianza."
+    "En Pizzería JEYMI nos enfocamos en preparar pizzas y paquetes con ingredientes de calidad, buen sabor y una atención cercana para que disfrutes cada pedido."
   );
 
   const [fotosGaleria, setFotosGaleria] = useState<string[]>([]);
@@ -189,7 +216,7 @@ export default function Home() {
           // ==========================
 
           if (Array.isArray(data.servicios)) {
-            setServicios(data.servicios as Servicio[]);
+            setPizzas(data.servicios as Pizza[]);
           }
 
           // ==========================
@@ -324,7 +351,7 @@ export default function Home() {
 
   const [nombre, setNombre] = useState("");
   const [telefono, setTelefono] = useState("");
-  const [servicio, setServicio] = useState("");
+  const [servicio, setPizza] = useState("");
   const [fecha, setFecha] = useState("");
   const [hora, setHora] = useState("");
   const [motivo, setMotivo] = useState("");
@@ -394,7 +421,7 @@ export default function Home() {
   // DIA CERRADO
   // ==============================
 
-  const diaSinServicio =
+  const diaSinPizza =
     !!fecha &&
     !cargandoHorarios &&
     !!horarioSeleccionado &&
@@ -514,7 +541,7 @@ export default function Home() {
       !horario.activo
     ) {
       setMensajeCita(
-        "⚠️ Ese día no hay servicio. Por favor selecciona otra fecha."
+        "⚠️ Ese día no estamos atendiendo pedidos. Por favor selecciona otra fecha."
       );
     }
   };
@@ -595,9 +622,9 @@ export default function Home() {
     // VALIDAR DIA DE SERVICIO
     // ==========================
 
-    if (diaSinServicio) {
+    if (diaSinPizza) {
       setMensajeCita(
-        "⚠️ Ese día no hay servicio. Por favor selecciona otra fecha."
+        "⚠️ Ese día no estamos atendiendo pedidos. Por favor selecciona otra fecha."
       );
 
       setHora("");
@@ -708,25 +735,23 @@ export default function Home() {
       // ==========================
 
       const lineas = [
-        "Hola, quiero solicitar una cita en Servicio Podológico Husey.",
+        "Hola, quiero solicitar un pedido de favor:.",
         "",
         `*Nombre:* ${nombre.trim()}`,
         `*Teléfono / WhatsApp:* ${telefono.trim()}`,
-        `*Servicio:* ${servicio}`,
-        `*Fecha:* ${fechaFormateada}`,
-        `*Hora:* ${formatearHora(hora)}`,
-        `*Motivo de la consulta:* ${
+        `*Pizza:* ${servicio}`,
+        `*Detalles del pedido:* ${
           motivo.trim() || "No especificado"
         }`,
         "",
-        "La cita quedó registrada como solicitud pendiente. Quedo pendiente de su confirmación. Muchas gracias.",
+        "Espero el tiempo en que llegaria mi pedido. Muchas gracias.",
       ];
 
       const mensajeTexto =
         lineas.join("\n");
 
       setMensajeCita(
-        "¡Cita registrada correctamente! Abriendo WhatsApp..."
+        "¡Pedido registrado correctamente! Abriendo WhatsApp..."
       );
 
       // ==========================
@@ -760,7 +785,7 @@ export default function Home() {
 
       setNombre("");
       setTelefono("");
-      setServicio("");
+      setPizza("");
       setFecha("");
       setHora("");
       setMotivo("");
@@ -793,59 +818,59 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <a
             href="#inicio"
-            className="text-2xl font-bold text-pink-600"
+            className="text-2xl font-bold text-red-600"
           >
-            HUSEY
+            JEYMI PIZZAS
           </a>
 
           <div className="hidden md:flex items-center gap-7 font-semibold">
             <a
               href="#inicio"
-              className="hover:text-pink-600 transition"
+              className="hover:text-red-600 transition"
             >
               Inicio
             </a>
 
             <a
               href="#servicios"
-              className="hover:text-pink-600 transition"
+              className="hover:text-red-600 transition"
             >
-              Servicios
+              menu
             </a>
 
             <a
               href="#nosotros"
-              className="hover:text-pink-600 transition"
+              className="hover:text-red-600 transition"
             >
               Nosotros
             </a>
 
             <a
               href="#galeria"
-              className="hover:text-pink-600 transition"
+              className="hover:text-red-600 transition"
             >
               Galería
             </a>
 
             <a
               href="#ubicacion"
-              className="hover:text-pink-600 transition"
+              className="hover:text-red-600 transition"
             >
               Ubicación
             </a>
 
             <a
               href="#contacto"
-              className="hover:text-pink-600 transition"
+              className="hover:text-red-600 transition"
             >
               Contacto
             </a>
 
             <a
               href="#cita"
-              className="px-5 py-2.5 rounded-full bg-pink-600 text-white hover:bg-pink-700 transition shadow-sm"
+              className="px-5 py-2.5 rounded-full bg-red-600 text-white hover:bg-red-700 transition shadow-sm"
             >
-              Agendar cita
+              Ordenar
             </a>
           </div>
 
@@ -858,7 +883,7 @@ export default function Home() {
 
             <label
               htmlFor="mobile-menu"
-              className="cursor-pointer block text-3xl font-bold text-pink-600 select-none"
+              className="cursor-pointer block text-3xl font-bold text-red-600 select-none"
             >
               <span className="peer-checked:hidden">
                 ☰
@@ -874,7 +899,7 @@ export default function Home() {
                 <a
                   href="#inicio"
                   onClick={cerrarMenu}
-                  className="px-7 py-5 text-lg font-semibold border-b border-gray-100 hover:bg-pink-50 hover:text-pink-600 transition"
+                  className="px-7 py-5 text-lg font-semibold border-b border-gray-100 hover:bg-red-50 hover:text-red-600 transition"
                 >
                   Inicio
                 </a>
@@ -882,15 +907,15 @@ export default function Home() {
                 <a
                   href="#servicios"
                   onClick={cerrarMenu}
-                  className="px-7 py-5 text-lg font-semibold border-b border-gray-100 hover:bg-pink-50 hover:text-pink-600 transition"
+                  className="px-7 py-5 text-lg font-semibold border-b border-gray-100 hover:bg-red-50 hover:text-red-600 transition"
                 >
-                  Servicios
+                  Pizzas
                 </a>
 
                 <a
                   href="#nosotros"
                   onClick={cerrarMenu}
-                  className="px-7 py-5 text-lg font-semibold border-b border-gray-100 hover:bg-pink-50 hover:text-pink-600 transition"
+                  className="px-7 py-5 text-lg font-semibold border-b border-gray-100 hover:bg-red-50 hover:text-red-600 transition"
                 >
                   Nosotros
                 </a>
@@ -898,7 +923,7 @@ export default function Home() {
                 <a
                   href="#galeria"
                   onClick={cerrarMenu}
-                  className="px-7 py-5 text-lg font-semibold border-b border-gray-100 hover:bg-pink-50 hover:text-pink-600 transition"
+                  className="px-7 py-5 text-lg font-semibold border-b border-gray-100 hover:bg-red-50 hover:text-red-600 transition"
                 >
                   Galería
                 </a>
@@ -906,7 +931,7 @@ export default function Home() {
                 <a
                   href="#ubicacion"
                   onClick={cerrarMenu}
-                  className="px-7 py-5 text-lg font-semibold border-b border-gray-100 hover:bg-pink-50 hover:text-pink-600 transition"
+                  className="px-7 py-5 text-lg font-semibold border-b border-gray-100 hover:bg-red-50 hover:text-red-600 transition"
                 >
                   Ubicación
                 </a>
@@ -914,7 +939,7 @@ export default function Home() {
                 <a
                   href="#contacto"
                   onClick={cerrarMenu}
-                  className="px-7 py-5 text-lg font-semibold border-b border-gray-100 hover:bg-pink-50 hover:text-pink-600 transition"
+                  className="px-7 py-5 text-lg font-semibold border-b border-gray-100 hover:bg-red-50 hover:text-red-600 transition"
                 >
                   Contacto
                 </a>
@@ -923,9 +948,9 @@ export default function Home() {
                   <a
                     href="#cita"
                     onClick={cerrarMenu}
-                    className="block w-full py-4 rounded-full bg-pink-600 text-white text-center font-bold text-lg hover:bg-pink-700 transition shadow-md"
+                    className="block w-full py-4 rounded-full bg-red-600 text-white text-center font-bold text-lg hover:bg-red-700 transition shadow-md"
                   >
-                    Agendar cita
+                    Ordenar
                   </a>
                 </div>
               </div>
@@ -942,7 +967,7 @@ export default function Home() {
         id="inicio"
         className="min-h-screen flex flex-col items-center justify-center px-6 text-center bg-white/70 pt-24"
       >
-        <p className="text-pink-600 font-semibold mb-3">
+        <p className="text-red-600 font-semibold mb-3">
           {fraseInicio}
         </p>
 
@@ -957,16 +982,16 @@ export default function Home() {
         <div className="flex flex-col sm:flex-row gap-4">
           <a
             href="#cita"
-            className="px-8 py-4 rounded-full bg-pink-600 text-white font-semibold hover:bg-pink-700 shadow-md transition"
+            className="px-8 py-4 rounded-full bg-red-600 text-white font-semibold hover:bg-red-700 shadow-md transition"
           >
-            Agendar cita
+            Ordenar
           </a>
 
           <a
             href="#servicios"
-            className="px-8 py-4 rounded-full border-2 border-pink-600 text-pink-600 font-semibold hover:bg-pink-100 transition"
+            className="px-8 py-4 rounded-full border-2 border-red-600 text-red-600 font-semibold hover:bg-red-100 transition"
           >
-            Conocer servicios
+            Ver menú
           </a>
         </div>
       </section>
@@ -981,18 +1006,18 @@ export default function Home() {
       >
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
-            <p className="text-pink-600 font-semibold mb-2">
-              Lo que ofrecemos
+            <p className="text-red-600 font-semibold mb-2">
+              Nuestro menú
             </p>
 
             <h2 className="text-4xl font-bold mb-4">
-              Nuestros servicios
+              Nuestras pizzas
             </h2>
 
             <p className="max-w-2xl mx-auto text-gray-600">
-              Contamos con diferentes opciones de atención
-              para ayudarte a mantener tus pies saludables y
-              en las mejores condiciones.
+              Tenemos pizzas y paquetes para compartir,
+              con diferentes combinaciones para disfrutar
+              en cualquier ocasión.
             </p>
           </div>
 
@@ -1005,12 +1030,14 @@ export default function Home() {
               {servicios.map(
                 (servicioItem, index) => {
                   const iconos = [
-                    "🦶",
-                    "✂️",
-                    "🩹",
-                    "✨",
-                    "👣",
-                    "💗",
+                    "🍕 🥤",
+                    "🍕",
+                    "🍕",
+                    "🍕",
+                    "🍕",
+                    "🍕",
+                    "🍕",
+                    "🍕",
                   ];
 
                   return (
@@ -1018,14 +1045,9 @@ export default function Home() {
                       key={`${servicioItem.titulo}-${index}`}
                       className="p-8 rounded-3xl bg-white shadow-md hover:shadow-xl hover:-translate-y-2 transition duration-300"
                     >
-                      <div className="w-14 h-14 rounded-2xl bg-pink-100 flex items-center justify-center mb-6">
+                      <div className="w-14 h-14 rounded-2xl bg-red-100 flex items-center justify-center mb-6">
                         <span className="text-2xl">
-                          {
-                            iconos[
-                              index %
-                                iconos.length
-                            ]
-                          }
+                          {iconos[index % iconos.length]}
                         </span>
                       </div>
 
@@ -1038,23 +1060,74 @@ export default function Home() {
                       </p>
 
                       {servicioItem.precio && (
-                        <p className="text-pink-600 font-bold mt-4">
+                        <p className="text-red-600 font-bold mt-4">
                           {servicioItem.precio}
                         </p>
                       )}
 
                       <a
                         href="#cita"
-                        className="inline-block mt-6 text-pink-600 font-semibold hover:text-pink-700"
+                        className="inline-block mt-6 text-red-600 font-semibold hover:text-red-700"
                       >
-                        Agendar cita →
+                        Ordenar →
                       </a>
                     </div>
                   );
                 }
               )}
+
+              {/* LOS 3 PAQUETES VAN DENTRO DEL MISMO MENÚ */}
+              {paquetesDestacados.map((paquete, index) => (
+                <div
+                  key={`${paquete.titulo}-${index}`}
+                  className="p-8 rounded-3xl bg-white shadow-md hover:shadow-xl hover:-translate-y-2 transition duration-300 border border-red-100"
+                >
+                  <div className="w-14 h-14 rounded-2xl bg-red-100 flex items-center justify-center mb-6">
+                    <span className="text-2xl">🍕📦</span>
+                  </div>
+
+                  <h3 className="text-xl font-bold mb-3">
+                    {paquete.titulo}
+                  </h3>
+
+                  <p className="text-gray-600 leading-relaxed whitespace-pre-line text-sm">
+                    {paquete.descripcion}
+                  </p>
+
+                  <p className="text-red-600 font-bold mt-4">
+                    {paquete.precio}
+                  </p>
+
+                  <a
+                    href="#cita"
+                    className="inline-block mt-6 text-red-600 font-semibold hover:text-red-700"
+                  >
+                    Ordenar →
+                  </a>
+                </div>
+              ))}
             </div>
           )}
+
+          {/* FOLLETO */}
+          <div className="mt-20">
+            <div className="text-center mb-8">
+              <p className="text-red-600 font-semibold mb-2">
+                Menú completo
+              </p>
+              <h3 className="text-3xl md:text-4xl font-bold">
+                Consulta nuestro folleto
+              </h3>
+            </div>
+
+            <div className="bg-white rounded-3xl shadow-2xl p-3 md:p-5 overflow-hidden">
+              <img
+                src="/folleto.jpeg"
+                alt="Folleto y menú de Pizzería Husey"
+                className="w-full h-auto rounded-2xl object-contain"
+              />
+            </div>
+          </div>
         </div>
       </section>
 
@@ -1067,12 +1140,12 @@ export default function Home() {
         className="py-20 px-6 bg-white/80"
       >
         <div className="max-w-4xl mx-auto text-center">
-          <p className="text-pink-600 font-semibold mb-2">
+          <p className="text-red-600 font-semibold mb-2">
             Conócenos
           </p>
 
           <h2 className="text-4xl font-bold mb-6">
-            Sobre nosotros
+            Sobre nuestra pizzería
           </h2>
 
           <p className="text-lg text-gray-600 leading-relaxed">
@@ -1091,8 +1164,8 @@ export default function Home() {
       >
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <p className="text-pink-600 font-semibold mb-2">
-              Conoce nuestro trabajo
+            <p className="text-red-600 font-semibold mb-2">
+              Conoce nuestras pizzas
             </p>
 
             <h2 className="text-4xl font-bold">
@@ -1137,7 +1210,7 @@ export default function Home() {
       >
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <p className="text-pink-600 font-semibold mb-2">
+            <p className="text-red-600 font-semibold mb-2">
               Encuéntranos
             </p>
 
@@ -1146,15 +1219,15 @@ export default function Home() {
             </h2>
 
             <p className="text-lg text-gray-600">
-              Visítanos en nuestro consultorio. Estamos
-              listos para atenderte.
+              Visítanos en nuestra pizzería. Estamos
+              listos para preparar tu pedido.
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div className="bg-white rounded-3xl shadow-md p-8">
               <div className="flex items-start gap-4 mb-6">
-                <div className="w-14 h-14 rounded-2xl bg-pink-100 flex items-center justify-center shrink-0">
+                <div className="w-14 h-14 rounded-2xl bg-red-100 flex items-center justify-center shrink-0">
                   <span className="text-2xl">
                     📍
                   </span>
@@ -1162,11 +1235,11 @@ export default function Home() {
 
                 <div>
                   <h3 className="text-xl font-bold mb-2">
-                    Servicio Podológico Husey
+                    PIZZAS JEYMI
                   </h3>
 
                   <p className="text-gray-600">
-                    Ubicación del consultorio
+                    Ubicación de la pizzería
                   </p>
                 </div>
               </div>
@@ -1195,7 +1268,7 @@ export default function Home() {
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block w-full mt-8 py-4 rounded-full bg-pink-600 text-white text-center font-bold hover:bg-pink-700 transition shadow-md"
+                className="block w-full mt-8 py-4 rounded-full bg-red-600 text-white text-center font-bold hover:bg-red-700 transition shadow-md"
               >
                 🧭 Cómo llegar
               </a>
@@ -1212,14 +1285,13 @@ export default function Home() {
                 loading="lazy"
                 allowFullScreen
                 referrerPolicy="no-referrer-when-downgrade"
-                title="Ubicación Servicio Podológico Husey"
+                title="Ubicación Pizzería Husey"
               />
             </div>
           </div>
         </div>
       </section>
 
-      ```tsx
       {/* ================================= */}
       {/* CONTACTO */}
       {/* ================================= */}
@@ -1230,8 +1302,8 @@ export default function Home() {
       >
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <p className="text-pink-600 font-semibold mb-2">
-              Estamos para ayudarte
+            <p className="text-red-600 font-semibold mb-2">
+              Estamos para atenderte
             </p>
 
             <h2 className="text-4xl font-bold mb-4">
@@ -1239,8 +1311,8 @@ export default function Home() {
             </h2>
 
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              ¿Tienes alguna duda o quieres agendar una
-              cita? Comunícate directamente con nosotros.
+              ¿Tienes alguna duda o quieres realizar un
+              pedido? Comunícate directamente con nosotros.
             </p>
           </div>
 
@@ -1257,7 +1329,7 @@ export default function Home() {
                 </span>
               </div>
 
-              <h3 className="text-xl font-bold mb-2 group-hover:text-pink-600 transition">
+              <h3 className="text-xl font-bold mb-2 group-hover:text-red-600 transition">
                 WhatsApp
               </h3>
 
@@ -1270,13 +1342,13 @@ export default function Home() {
               href={`tel:+${telefonoNumero}`}
               className="group bg-white rounded-3xl shadow-md p-7 text-center hover:shadow-xl hover:-translate-y-2 transition duration-300"
             >
-              <div className="w-16 h-16 mx-auto rounded-2xl bg-pink-100 flex items-center justify-center mb-5">
+              <div className="w-16 h-16 mx-auto rounded-2xl bg-red-100 flex items-center justify-center mb-5">
                 <span className="text-3xl">
                   📞
                 </span>
               </div>
 
-              <h3 className="text-xl font-bold mb-2 group-hover:text-pink-600 transition">
+              <h3 className="text-xl font-bold mb-2 group-hover:text-red-600 transition">
                 Llamar
               </h3>
 
@@ -1287,14 +1359,14 @@ export default function Home() {
           </div>
 
           <div className="mt-8 bg-white rounded-3xl shadow-md p-8 text-center">
-            <div className="w-14 h-14 mx-auto rounded-2xl bg-pink-100 flex items-center justify-center mb-4">
+            <div className="w-14 h-14 mx-auto rounded-2xl bg-red-100 flex items-center justify-center mb-4">
               <span className="text-2xl">
                 🕐
               </span>
             </div>
 
             <h3 className="text-xl font-bold mb-2">
-              Horario de atención
+              Horarios
             </h3>
 
             <p className="text-gray-600 whitespace-pre-line">
@@ -1311,19 +1383,19 @@ export default function Home() {
 
       <section
         id="cita"
-        className="py-20 px-6 bg-pink-600 text-white"
+        className="py-20 px-6 bg-red-600 text-white"
       >
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <p className="font-semibold mb-2 text-pink-100">
-              Atención personalizada
+            <p className="font-semibold mb-2 text-red-100">
+              Pedidos y atención
             </p>
 
             <h2 className="text-4xl md:text-5xl font-bold mb-5">
-              Agenda tu cita
+              Haz tu pedido
             </h2>
 
-            <p className="text-lg text-pink-50 max-w-2xl mx-auto">
+            <p className="text-lg text-red-50 max-w-2xl mx-auto">
               Completa el siguiente formulario y solicita
               tu cita de manera rápida y sencilla.
             </p>
@@ -1354,7 +1426,7 @@ export default function Home() {
                     setNombre(e.target.value)
                   }
                   required
-                  className="w-full px-5 py-4 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition"
+                  className="w-full px-5 py-4 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 />
               </div>
 
@@ -1378,199 +1450,74 @@ export default function Home() {
                     setTelefono(e.target.value)
                   }
                   required
-                  className="w-full px-5 py-4 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition"
+                  className="w-full px-5 py-4 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 />
               </div>
 
               {/* SERVICIO */}
 
               <div>
-                <label
-                  htmlFor="servicio"
-                  className="block font-semibold mb-2"
-                >
-                  Servicio
-                </label>
+  <label
+    htmlFor="servicio"
+    className="block font-semibold mb-2"
+  >
+    ¿QUÉ DESEAS ORDENAR?
+  </label>
 
-                <select
-                  id="servicio"
-                  name="servicio"
-                  value={servicio}
-                  onChange={(e) =>
-                    setServicio(e.target.value)
-                  }
-                  required
-                  className="w-full px-5 py-4 rounded-2xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition"
-                >
-                  <option value="" disabled>
-                    Selecciona un servicio
-                  </option>
+  <input
+    id="servicio"
+    name="servicio"
+    type="text"
+    value={servicio}
+    onChange={(e) =>
+      setPizza(e.target.value)
+    }
+    required
+    placeholder="Ejemplo: Quiero el paquete 2 o quiero 2 pizzas grandes"
+    className="w-full px-5 py-4 rounded-2xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+  />
+</div>
 
-                  {servicios.map(
-                    (servicioItem, index) => (
-                      <option
-                        key={`${servicioItem.titulo}-${index}`}
-                        value={servicioItem.titulo}
-                      >
-                        {servicioItem.titulo}
-                        {servicioItem.precio
-                          ? ` - ${servicioItem.precio}`
-                          : ""}
-                      </option>
-                    )
-                  )}
-                </select>
-              </div>
+{/* MOTIVO */}
 
-              {/* FECHA Y HORA */}
+<div>
+  <label
+    htmlFor="motivo"
+    className="block font-semibold mb-2"
+  >
+    Detalles del pedido{" "}
+    <span className="text-gray-400 font-normal">
+      (obligatorio)
+    </span>
+  </label>
 
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <label
-                    htmlFor="fecha"
-                    className="block font-semibold mb-2"
-                  >
-                    Fecha
-                  </label>
+  <textarea
+    id="motivo"
+    name="motivo"
+    rows={4}
+    placeholder="indica de que especialidades serian, calle, color del zaguán y fachada, por ingrediente extra o por mitad y mitad tiene un costo extra dependiendo el tamaño..."
+    value={motivo}
+    onChange={(e) =>
+      setMotivo(e.target.value)
+    }
+    required
+    className="w-full px-5 py-4 rounded-2xl border border-gray-200 resize-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+  />
+</div>
 
-                  <input
-                    type="date"
-                    id="fecha"
-                    name="fecha"
-                    min={fechaMinima}
-                    value={fecha}
-                    onChange={(e) =>
-                      cambiarFecha(
-                        e.target.value
-                      )
-                    }
-                    required
-                    className="w-full px-5 py-4 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition"
-                  />
+{/* MENSAJE */}
 
-                  {/* AVISO DIA CERRADO */}
-
-                  {diaSinServicio && (
-                    <div className="mt-3 rounded-2xl bg-red-100 text-red-700 p-4 font-semibold">
-                      ⚠️ Ese día no hay servicio.
-                      <div className="font-normal text-sm mt-1">
-                        Por favor selecciona otra fecha.
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="hora"
-                    className="block font-semibold mb-2"
-                  >
-                    Hora
-                  </label>
-
-                  <select
-                    id="hora"
-                    name="hora"
-                    value={hora}
-                    onChange={(e) =>
-                      setHora(e.target.value)
-                    }
-                    required
-                    disabled={
-                      cargandoHorarios ||
-                      !fecha ||
-                      diaSinServicio ||
-                      horasDisponibles.length === 0
-                    }
-                    className="w-full px-5 py-4 rounded-2xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
-                  >
-                    <option value="" disabled>
-                      {cargandoHorarios
-                        ? "Cargando horarios..."
-                        : !fecha
-                        ? "Primero selecciona una fecha"
-                        : diaSinServicio
-                        ? "No hay servicio ese día"
-                        : "Selecciona una hora"}
-                    </option>
-
-                    {horasDisponibles.map(
-                      (horaDisponible) => (
-                        <option
-                          key={horaDisponible}
-                          value={horaDisponible}
-                        >
-                          {formatearHora(
-                            horaDisponible
-                          )}
-                        </option>
-                      )
-                    )}
-                  </select>
-
-                  {/* HORARIO DEL DIA */}
-
-                  {fecha &&
-                    !diaSinServicio &&
-                    horarioSeleccionado &&
-                    horarioSeleccionado.activo &&
-                    horarioSeleccionado.hora_inicio &&
-                    horarioSeleccionado.hora_fin && (
-                      <p className="mt-2 text-sm text-gray-500">
-                        🕐 Atención este día:{" "}
-                        {formatearHora(
-                          horarioSeleccionado.hora_inicio
-                        )}{" "}
-                        -{" "}
-                        {formatearHora(
-                          horarioSeleccionado.hora_fin
-                        )}
-                      </p>
-                    )}
-                </div>
-              </div>
-
-              {/* MOTIVO */}
-
-              <div>
-                <label
-                  htmlFor="motivo"
-                  className="block font-semibold mb-2"
-                >
-                  Motivo de la consulta{" "}
-                  <span className="text-gray-400 font-normal">
-                    (opcional)
-                  </span>
-                </label>
-
-                <textarea
-                  id="motivo"
-                  name="motivo"
-                  rows={4}
-                  placeholder="Cuéntanos brevemente el motivo de tu consulta..."
-                  value={motivo}
-                  onChange={(e) =>
-                    setMotivo(e.target.value)
-                  }
-                  className="w-full px-5 py-4 rounded-2xl border border-gray-200 resize-none focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition"
-                />
-              </div>
-
-              {/* MENSAJE */}
-
-              {mensajeCita && (
-                <div
-                  className={`rounded-2xl p-4 text-center font-semibold ${
-                    mensajeCita.includes(
-                      "correctamente"
-                    )
-                      ? "bg-green-100 text-green-700"
-                      : "bg-red-100 text-red-700"
-                  }`}
-                >
-                  {mensajeCita}
-                </div>
-              )}
+{mensajeCita && (
+  <div
+    className={`rounded-2xl p-4 text-center font-semibold ${
+      mensajeCita.includes("correctamente")
+        ? "bg-green-100 text-green-700"
+        : "bg-red-100 text-red-700"
+    }`}
+  >
+    {mensajeCita}
+  </div>
+)}
 
               {/* BOTON */}
 
@@ -1579,22 +1526,22 @@ export default function Home() {
                   type="submit"
                   disabled={
                     enviandoCita ||
-                    diaSinServicio ||
+                    diaSinPizza ||
                     !fecha ||
                     !hora
                   }
-                  className="block w-full bg-pink-600 text-white py-4 rounded-xl font-bold text-center hover:bg-pink-700 transition shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="block w-full bg-red-600 text-white py-4 rounded-xl font-bold text-center hover:bg-red-700 transition shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {enviandoCita
-                    ? "Registrando cita..."
-                    : "Solicitar cita por WhatsApp"}
+                    ? "Registrando pedido..."
+                    : "Realizar pedido por WhatsApp"}
                 </button>
               </div>
 
               <p className="text-center text-sm text-gray-500">
                 Primero registraremos tu solicitud y
                 después se abrirá WhatsApp para enviarla
-                directamente a la podóloga.
+                directamente a la pizzeria.
               </p>
             </form>
           </div>
@@ -1607,7 +1554,7 @@ export default function Home() {
 
       <footer className="py-8 px-6 bg-gray-900 text-white text-center">
         <p className="font-semibold">
-          SERVICIO PODOLÓGICO HUSEY
+          PIZZERÍA JEYMI
         </p>
 
         <p className="text-sm text-gray-400 mt-2">
@@ -1616,7 +1563,7 @@ export default function Home() {
 
         <a
           href="/login"
-          className="inline-block text-sm text-gray-500 hover:text-pink-400 transition mt-4"
+          className="inline-block text-sm text-gray-500 hover:text-red-400 transition mt-4"
         >
           Acceso administrativo
         </a>

@@ -677,7 +677,7 @@ export default function AdminPage() {
     }
 
     const mensajeWhatsApp =
-      `Hola ${cita.nombre}, te contactamos de Servicio Podológico Husey respecto a tu solicitud de cita para el ${formatearFecha(
+      `Hola ${cita.nombre}, te contactamos de Jeymi pizza ${formatearFecha(
         cita.fecha
       )} a las ${formatearHora(
         cita.hora
@@ -2109,7 +2109,7 @@ doc.text(
             href="/"
             className="text-2xl font-bold text-pink-600"
           >
-            HUSEY{" "}
+            PIZZAS JEYMI{" "}
             <span className="text-xs text-gray-500 font-normal">
               | Panel General
             </span>
@@ -3043,11 +3043,11 @@ doc.text(
                     <div>
 
                       <h2 className="text-2xl font-bold text-gray-800">
-                        Citas
+                        PEDIDOS
                       </h2>
 
                       <p className="text-sm text-gray-500 mt-1">
-                        Administra las solicitudes de cita de tus pacientes.
+                        Administra los pedidos o contactar a los clientes.
                       </p>
 
                     </div>
@@ -3131,11 +3131,11 @@ doc.text(
                         </div>
 
                         <p className="font-bold text-gray-600">
-                          No hay citas todavía
+                          No hay pedidos todavía
                         </p>
 
                         <p className="text-sm text-gray-400 mt-1">
-                          Cuando un paciente solicite una cita aparecerá aquí.
+                          Cuando un cliente solicite un pedido aparecerá aquí.
                         </p>
 
                       </div>

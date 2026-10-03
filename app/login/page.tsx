@@ -38,17 +38,29 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-100 flex items-center justify-center px-6">
+    <main className="min-h-screen bg-orange-50 flex items-center justify-center px-6">
       <div className="w-full max-w-md">
+
         {/* TARJETA */}
-        <div className="bg-white rounded-3xl shadow-lg p-8">
+        <div className="bg-white rounded-3xl shadow-xl p-8 border border-red-100">
+
           {/* ENCABEZADO */}
           <div className="text-center mb-8">
-            <div className="text-5xl mb-4">🦶</div>
+
+            {/* ICONO */}
+            <div className="w-20 h-20 mx-auto mb-5 rounded-3xl bg-red-100 flex items-center justify-center shadow-sm">
+              <span className="text-5xl">
+                🍕
+              </span>
+            </div>
 
             <h1 className="text-3xl font-bold text-gray-800">
-              Panel de administración
+              Pizzas Jeymi
             </h1>
+
+            <p className="text-red-600 font-semibold mt-2">
+              Panel de administración
+            </p>
 
             <p className="text-gray-500 mt-2">
               Inicia sesión para administrar tu página.
@@ -57,6 +69,7 @@ export default function LoginPage() {
 
           {/* FORMULARIO */}
           <form onSubmit={iniciarSesion} className="space-y-5">
+
             {/* CORREO */}
             <div>
               <label
@@ -74,7 +87,7 @@ export default function LoginPage() {
                 placeholder="Ingresa tu correo"
                 autoComplete="email"
                 required
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-pink-400"
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-red-400 focus:border-red-400 transition"
               />
             </div>
 
@@ -95,7 +108,7 @@ export default function LoginPage() {
                 placeholder="Ingresa tu contraseña"
                 autoComplete="current-password"
                 required
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-pink-400"
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-red-400 focus:border-red-400 transition"
               />
             </div>
 
@@ -110,7 +123,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={cargando}
-              className="w-full bg-pink-600 text-white py-3 rounded-xl font-bold hover:bg-pink-700 active:scale-[0.98] transition shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full bg-red-600 text-white py-3 rounded-xl font-bold hover:bg-red-700 active:scale-[0.98] transition shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {cargando
                 ? "⏳ Iniciando sesión..."
@@ -122,10 +135,11 @@ export default function LoginPage() {
         {/* VOLVER */}
         <a
           href="/"
-          className="block w-full text-center text-gray-500 hover:text-pink-600 mt-5 transition"
+          className="block w-full text-center text-gray-500 hover:text-red-600 mt-5 transition"
         >
-          ← Volver al sitio
+          ← Volver a Pizzas Jeymi
         </a>
+
       </div>
     </main>
   );
