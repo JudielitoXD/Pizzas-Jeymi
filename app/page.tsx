@@ -25,14 +25,7 @@ type ContenidoContacto = {
   telefono: string;
 };
 
-type Horario = {
-  id: number;
-  dia_semana: number;
-  nombre_dia: string;
-  activo: boolean;
-  hora_inicio: string | null;
-  hora_fin: string | null;
-};
+
 
 const inicioPorDefecto: ContenidoInicio = {
   titulo: "PIZZERÍA JEYMI",
@@ -152,13 +145,6 @@ export default function Home() {
   const [cargandoContenido, setCargandoContenido] = useState(true);
 
   // ==============================
-  // HORARIOS
-  // ==============================
-
-  const [horarios, setHorarios] = useState<Horario[]>([]);
-  const [cargandoHorarios, setCargandoHorarios] = useState(true);
-
-  // ==============================
   // CARGAR TODO DESDE SUPABASE
   // ==============================
 
@@ -182,11 +168,19 @@ export default function Home() {
           .single();
 
         if (error) {
-          console.error(
-            "Error al cargar contenido desde Supabase:",
-            error
-          );
-        }
+  console.error("Error al guardar el pedido:", {
+    message: error.message,
+    code: error.code,
+    details: error.details,
+    hint: error.hint,
+  });
+
+  setMensajeCita(
+    error.message || "No se pudo registrar el pedido."
+  );
+
+  return;
+}
 
         if (data && activo) {
           // ==========================
@@ -285,46 +279,7 @@ export default function Home() {
       }
     };
 
-    // ==========================
-    // CARGAR HORARIOS
-    // ==========================
-
-    const cargarHorarios = async () => {
-      const supabase = createClient();
-
-      try {
-        const { data, error } = await supabase
-          .from("horarios")
-          .select(
-            "id, dia_semana, nombre_dia, activo, hora_inicio, hora_fin"
-          )
-          .order("dia_semana", { ascending: true });
-
-        if (error) {
-          console.error(
-            "Error al cargar horarios:",
-            error
-          );
-          return;
-        }
-
-        if (data && activo) {
-          setHorarios(data as Horario[]);
-        }
-      } catch (error) {
-        console.error(
-          "Error inesperado al cargar horarios:",
-          error
-        );
-      } finally {
-        if (activo) {
-          setCargandoHorarios(false);
-        }
-      }
-    };
-
     cargarContenido();
-    cargarHorarios();
 
     return () => {
       activo = false;
@@ -352,212 +307,10 @@ export default function Home() {
   const [nombre, setNombre] = useState("");
   const [telefono, setTelefono] = useState("");
   const [servicio, setPizza] = useState("");
-  const [fecha, setFecha] = useState("");
-  const [hora, setHora] = useState("");
   const [motivo, setMotivo] = useState("");
 
   const [enviandoCita, setEnviandoCita] = useState(false);
   const [mensajeCita, setMensajeCita] = useState("");
-
-  // ==============================
-  // FECHA MINIMA
-  // ==============================
-
-  const fechaMinima = new Date()
-    .toISOString()
-    .split("T")[0];
-
-  // ==============================
-  // DETECTAR DIA SELECCIONADO
-  // ==============================
-
-  const diaSeleccionado = fecha
-    ? (() => {
-        const [anio, mes, dia] = fecha
-          .split("-")
-          .map(Number);
-
-        const fechaLocal = new Date(
-          anio,
-          mes - 1,
-          dia
-        );
-
-        const diaJavascript = fechaLocal.getDay();
-
-        // JavaScript:
-        // Domingo = 0
-        // Lunes = 1
-        // Martes = 2
-        // ...
-        // Sábado = 6
-        //
-        // Nuestra DB:
-        // Lunes = 1
-        // ...
-        // Sábado = 6
-        // Domingo = 7
-
-        return diaJavascript === 0
-          ? 7
-          : diaJavascript;
-      })()
-    : null;
-
-  // ==============================
-  // HORARIO DEL DIA SELECCIONADO
-  // ==============================
-
-  const horarioSeleccionado =
-    diaSeleccionado !== null
-      ? horarios.find(
-          (horarioItem) =>
-            horarioItem.dia_semana ===
-            diaSeleccionado
-        ) || null
-      : null;
-
-  // ==============================
-  // DIA CERRADO
-  // ==============================
-
-  const diaSinPizza =
-    !!fecha &&
-    !cargandoHorarios &&
-    !!horarioSeleccionado &&
-    !horarioSeleccionado.activo;
-
-  // ==============================
-  // HORAS DISPONIBLES
-  // ==============================
-
-  const horasDisponibles = (() => {
-    if (
-      !horarioSeleccionado ||
-      !horarioSeleccionado.activo ||
-      !horarioSeleccionado.hora_inicio ||
-      !horarioSeleccionado.hora_fin
-    ) {
-      return [];
-    }
-
-    const horaInicio =
-      Number(
-        horarioSeleccionado.hora_inicio.split(":")[0]
-      );
-
-    const horaFin =
-      Number(
-        horarioSeleccionado.hora_fin.split(":")[0]
-      );
-
-    const horas: string[] = [];
-
-    for (
-      let horaActual = horaInicio;
-      horaActual <= horaFin;
-      horaActual++
-    ) {
-      const valorHora = `${String(
-        horaActual
-      ).padStart(2, "0")}:00`;
-
-      horas.push(valorHora);
-    }
-
-    return horas;
-  })();
-
-  // ==============================
-  // FORMATO HORA
-  // ==============================
-
-  const formatearHora = (horaValor: string) => {
-    const [horaNumero] = horaValor
-      .split(":")
-      .map(Number);
-
-    if (horaNumero === 0) {
-      return "12:00 AM";
-    }
-
-    if (horaNumero < 12) {
-      return `${String(horaNumero).padStart(
-        2,
-        "0"
-      )}:00 AM`;
-    }
-
-    if (horaNumero === 12) {
-      return "12:00 PM";
-    }
-
-    return `${String(horaNumero - 12).padStart(
-      2,
-      "0"
-    )}:00 PM`;
-  };
-
-  // ==============================
-  // CUANDO CAMBIA LA FECHA
-  // ==============================
-
-  const cambiarFecha = (
-    nuevaFecha: string
-  ) => {
-    setFecha(nuevaFecha);
-    setHora("");
-    setMensajeCita("");
-
-    if (!nuevaFecha) {
-      return;
-    }
-
-    const [anio, mes, dia] = nuevaFecha
-      .split("-")
-      .map(Number);
-
-    const fechaLocal = new Date(
-      anio,
-      mes - 1,
-      dia
-    );
-
-    const diaJavascript =
-      fechaLocal.getDay();
-
-    const diaDB =
-      diaJavascript === 0
-        ? 7
-        : diaJavascript;
-
-    const horario = horarios.find(
-      (horarioItem) =>
-        horarioItem.dia_semana === diaDB
-    );
-
-    if (
-      horario &&
-      !horario.activo
-    ) {
-      setMensajeCita(
-        "⚠️ Ese día no estamos atendiendo pedidos. Por favor selecciona otra fecha."
-      );
-    }
-  };
-
-  // ==============================
-  // FECHA FORMATEADA
-  // ==============================
-
-  const fechaFormateada = fecha
-    ? (() => {
-        const [anio, mes, dia] =
-          fecha.split("-");
-
-        return `${dia}/${mes}/${anio}`;
-      })()
-    : "";
 
   // ==============================
   // NUMEROS LIMPIOS
@@ -607,9 +360,7 @@ export default function Home() {
     if (
       !nombre.trim() ||
       !telefono.trim() ||
-      !servicio ||
-      !fecha ||
-      !hora
+      !servicio
     ) {
       setMensajeCita(
         "Por favor completa todos los campos obligatorios."
@@ -618,78 +369,8 @@ export default function Home() {
       return;
     }
 
-    // ==========================
-    // VALIDAR DIA DE SERVICIO
-    // ==========================
-
-    if (diaSinPizza) {
-      setMensajeCita(
-        "⚠️ Ese día no estamos atendiendo pedidos. Por favor selecciona otra fecha."
-      );
-
-      setHora("");
-
-      return;
-    }
-
-    // ==========================
-    // VALIDAR HORARIO
-    // ==========================
-
-    if (
-      horasDisponibles.length > 0 &&
-      !horasDisponibles.includes(hora)
-    ) {
-      setMensajeCita(
-        "⚠️ La hora seleccionada no está disponible para ese día."
-      );
-
-      setHora("");
-
-      return;
-    }
-
     try {
       setEnviandoCita(true);
-
-      // ==========================
-      // COMPROBAR DISPONIBILIDAD
-      // ==========================
-
-      const {
-        data: citaExistente,
-        error: errorConsulta,
-      } = await supabase
-        .from("citas")
-        .select("id")
-        .eq("fecha", fecha)
-        .eq("hora", hora)
-        .neq("estado", "cancelada")
-        .limit(1);
-
-      if (errorConsulta) {
-        console.error(
-          "Error al comprobar disponibilidad:",
-          errorConsulta
-        );
-
-        setMensajeCita(
-          "No se pudo comprobar la disponibilidad. Inténtalo nuevamente."
-        );
-
-        return;
-      }
-
-      if (
-        citaExistente &&
-        citaExistente.length > 0
-      ) {
-        setMensajeCita(
-          "⚠️ Ese horario ya está ocupado. Por favor selecciona otra fecha u otra hora."
-        );
-
-        return;
-      }
 
       // ==========================
       // GUARDAR EN SUPABASE
@@ -700,16 +381,10 @@ export default function Home() {
         .insert({
           nombre: nombre.trim(),
           telefono: telefono.trim(),
-          servicio,
-          fecha,
-          hora,
+          servicio: servicio.trim(),
           motivo: motivo.trim(),
           estado: "pendiente",
         });
-
-      // ==========================
-      // MANEJAR HORARIO OCUPADO
-      // ==========================
 
       if (error) {
         console.error(
@@ -719,7 +394,7 @@ export default function Home() {
 
         if (error.code === "23505") {
           setMensajeCita(
-            "⚠️ Ese horario acaba de ser reservado por otra persona. Por favor selecciona otra fecha u otra hora."
+            "⚠️ No se pudo registrar el pedido. Inténtalo nuevamente."
           );
         } else {
           setMensajeCita(
@@ -786,8 +461,6 @@ export default function Home() {
       setNombre("");
       setTelefono("");
       setPizza("");
-      setFecha("");
-      setHora("");
       setMotivo("");
     } catch (error) {
       console.error(
@@ -1396,8 +1069,8 @@ export default function Home() {
             </h2>
 
             <p className="text-lg text-red-50 max-w-2xl mx-auto">
-              Completa el siguiente formulario y solicita
-              tu cita de manera rápida y sencilla.
+              ¿Se te antoja una buena pizza? 🍕🔥
+Tu antojo, nuestra especialidad. Haz tu pedido de forma fácil y disfruta el sabor de una pizza preparada con calidad, dedicación y mucho cariño. ❤️
             </p>
           </div>
 
@@ -1524,12 +1197,7 @@ export default function Home() {
               <div className="pt-2">
                 <button
                   type="submit"
-                  disabled={
-                    enviandoCita ||
-                    diaSinPizza ||
-                    !fecha ||
-                    !hora
-                  }
+                  disabled={enviandoCita}
                   className="block w-full bg-red-600 text-white py-4 rounded-xl font-bold text-center hover:bg-red-700 transition shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {enviandoCita
