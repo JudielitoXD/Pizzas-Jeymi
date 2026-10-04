@@ -2082,7 +2082,7 @@ doc.text(
       <main className="min-h-screen bg-gray-100 flex items-center justify-center">
         <div className="text-center">
           <div className="text-5xl mb-4">
-            🦶
+            🍕
           </div>
 
           <p className="text-gray-600 font-semibold">
@@ -2192,7 +2192,7 @@ doc.text(
                 },
                 {
                   id: "pacientes",
-                  label: "🦶 Pacientes",
+                  label: "🍕 Pacientes",
                 },
               ].map((tab) => (
                 <button
@@ -3218,7 +3218,7 @@ doc.text(
                                   <div className="bg-white rounded-2xl p-3 border border-gray-100">
 
                                     <p className="text-xs text-gray-400 font-semibold">
-                                      🦶 Servicio
+                                      🍕 Servicio
                                     </p>
 
                                     <p className="font-bold text-gray-800 mt-1">
@@ -4025,7 +4025,7 @@ doc.text(
                         <div className="text-center py-12">
 
                           <div className="text-5xl mb-3">
-                            🦶
+                            🍕
                           </div>
 
                           <p className="text-gray-500 font-semibold">
